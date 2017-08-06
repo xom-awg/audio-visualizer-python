@@ -31,6 +31,7 @@ class PreviewWindow(QtWidgets.QLabel):
         self.parent = parent
         self.setFrameStyle(QtWidgets.QFrame.StyledPanel)
         self.pixmap = QtGui.QPixmap(img)
+        self.isFlickering = 0
 
     def paintEvent(self, event):
         size = self.size()
@@ -47,8 +48,22 @@ class PreviewWindow(QtWidgets.QLabel):
         painter.drawPixmap(point, scaledPix)
 
     def changePixmap(self, img):
+        if self.parent.encoding:
+            # track time to determine if the preview is flickering due to lag
+            bTime = time.time()
+        elif self.isFlickering > 0:
+            # no longer exporting video so reset the paint area to normal
+            self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent, False)
+            self.isFlickering = 0
+
         self.pixmap = QtGui.QPixmap(img)
         self.repaint()
+
+        if self.parent.encoding and time.time() - bTime > 1.1:
+            self.isFlickering += 1
+        if self.isFlickering == 8:
+            # if export is lagging, temporarily disable clearing the paint area
+            self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent, True)
 
     @QtCore.pyqtSlot(str)
     def threadError(self, msg):
