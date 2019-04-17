@@ -94,16 +94,17 @@ class Core():
     r, g, b = color
     color2 = (r, g, b, 50)
     for j in range(0, 63):
-      draw.rectangle((10 + j * 20, 325, 10 + j * 20 + 20, 325 - spectrum[j * 4] * 1 - 10), fill=color2)
-      draw.rectangle((15 + j * 20, 320, 15 + j * 20 + 10, 320 - spectrum[j * 4] * 1), fill=color)
+      #             ((x0,        , y0 ,               x1,           y1 ))
+      draw.rectangle((5 + j * 20, 325, 5 + j * 20 + 20, 325 - spectrum[j * 4] * 2 - 10), fill=color2)
+      draw.rectangle((10 + j * 20, 320, 10 + j * 20 + 10, 320 - spectrum[j * 4] * 2), fill=color)
 
 
     imBottom = imTop.transpose(Image.FLIP_TOP_BOTTOM)
     
     im = Image.new("RGB", (1280, 720), "black")
     im.paste(image, (0, 0))
-    im.paste(imTop, (0, 0), mask=imTop)
-    im.paste(imBottom, (0, 360), mask=imBottom)
+    im.paste(imTop, (0, 385), mask=imTop)
+    #im.paste(imBottom, (0, 360), mask=imBottom)
 
     return im
 
